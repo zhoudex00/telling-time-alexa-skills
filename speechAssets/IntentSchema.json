@@ -1,0 +1,274 @@
+{
+  "languageModel": {
+    "types": [
+      {
+        "name": "modeslot",
+        "values": [
+          {
+            "id": "MATH",
+            "name": {
+              "value": "math",
+              "synonyms": [
+                "mathematics",
+                "maths"
+              ]
+            }
+          },
+          {
+            "id": "IDENTIFY",
+            "name": {
+              "value": "identify",
+              "synonyms": [
+                "identifying",
+                "identification"
+              ]
+            }
+          },
+          {
+            "id": "LEARN",
+            "name": {
+              "value": "learn",
+              "synonyms": [
+                "learning"
+              ]
+            }
+          },
+          {
+            "id": null,
+            "name": {
+              "value": "about",
+              "synonyms": []
+            }
+          },
+          {
+            "id": "MENU",
+            "name": {
+              "value": "menu",
+              "synonyms": [
+                "main menu"
+              ]
+            }
+          }
+        ]
+      }
+    ],
+    "intents": [
+      {
+        "name": "AMAZON.CancelIntent",
+        "samples": []
+      },
+      {
+        "name": "AMAZON.HelpIntent",
+        "samples": []
+      },
+      {
+        "name": "AMAZON.MoreIntent",
+        "samples": []
+      },
+      {
+        "name": "AMAZON.NavigateSettingsIntent",
+        "samples": []
+      },
+      {
+        "name": "AMAZON.NextIntent",
+        "samples": [
+          "next",
+          "next page",
+          "next slide",
+          "continue"
+        ]
+      },
+      {
+        "name": "AMAZON.NoIntent",
+        "samples": []
+      },
+      {
+        "name": "AMAZON.PageDownIntent",
+        "samples": []
+      },
+      {
+        "name": "AMAZON.PageUpIntent",
+        "samples": []
+      },
+      {
+        "name": "AMAZON.PauseIntent",
+        "samples": []
+      },
+      {
+        "name": "AMAZON.PreviousIntent",
+        "samples": [
+          "go back",
+          "the page before",
+          "the slide before"
+        ]
+      },
+      {
+        "name": "AMAZON.RepeatIntent",
+        "samples": [
+          "repeat",
+          "say again",
+          "again",
+          "what",
+          "what did you say",
+          "say it another time",
+          "repeat one more time",
+          "what was the question",
+          "what's the question",
+          "say it one more time"
+        ]
+      },
+      {
+        "name": "AMAZON.ResumeIntent",
+        "samples": [
+          "resume",
+          "i am back"
+        ]
+      },
+      {
+        "name": "AMAZON.ScrollDownIntent",
+        "samples": []
+      },
+      {
+        "name": "AMAZON.ScrollLeftIntent",
+        "samples": []
+      },
+      {
+        "name": "AMAZON.ScrollRightIntent",
+        "samples": []
+      },
+      {
+        "name": "AMAZON.ScrollUpIntent",
+        "samples": []
+      },
+      {
+        "name": "AMAZON.StartOverIntent",
+        "samples": [
+          "start over",
+          "new game",
+          "start",
+          "clear score"
+        ]
+      },
+      {
+        "name": "AMAZON.StopIntent",
+        "samples": [
+          "end",
+          "end the game",
+          "terminate",
+          "stop the game"
+        ]
+      },
+      {
+        "name": "AMAZON.YesIntent",
+        "samples": []
+      },
+      {
+        "name": "AnswerDuration",
+        "samples": [
+          "it's {Answer}",
+          "it is {Answer}",
+          "the answer is {Answer}",
+          "{Answer}",
+          "{Answer} long",
+          "it is {Answer} long",
+          "it's {Answer} long",
+          "{Answer} away",
+          "would be {Answer}",
+          "would be {Answer} long"
+        ],
+        "slots": [
+          {
+            "name": "Answer",
+            "type": "AMAZON.DURATION"
+          }
+        ]
+      },
+      {
+        "name": "AnswerOption",
+        "samples": [
+          "{Option}",
+          "it's {Option}",
+          "it is {Option}",
+          "it's number {Option}",
+          "it is number {Option}",
+          "choice {Option}",
+          "choice number {Option}",
+          "option {Option}",
+          "option number {Option}",
+          "answer {Option}",
+          "answer number {Option}"
+        ],
+        "slots": [
+          {
+            "name": "Option",
+            "type": "AMAZON.NUMBER"
+          }
+        ]
+      },
+      {
+        "name": "AnswerTime",
+        "samples": [
+          "{Time}",
+          "it is {Time}",
+          "it would be {Time}",
+          "that is {Time}",
+          "it's {Time}",
+          "that's {Time}",
+          "it will be {Time}",
+          "that would be {Time}",
+          "exactly {Time}"
+        ],
+        "slots": [
+          {
+            "name": "Time",
+            "type": "AMAZON.TIME"
+          }
+        ]
+      },
+      {
+        "name": "ChooseModeIntent",
+        "samples": [
+          "{mode}",
+          "go to the {mode}",
+          "go to {mode} mode",
+          "{mode} mode",
+          "go to the {mode} mode",
+          "the {mode}",
+          "go back to {mode} mode",
+          "back to  {mode} mode",
+          "back to the {mode}"
+        ],
+        "slots": [
+          {
+            "name": "mode",
+            "type": "modeslot"
+          }
+        ]
+      },
+      {
+        "name": "DontKnowIntent",
+        "samples": [
+          "don't know",
+          "i don't know",
+          "pass",
+          "skip",
+          "no idea",
+          "no clue",
+          "hard",
+          "i don't get it",
+          "i do not know"
+        ],
+        "slots": []
+      },
+      {
+        "name": "HelloWorldIntent",
+        "samples": [
+          "hello",
+          "hi"
+        ],
+        "slots": []
+      }
+    ],
+    "invocationName": "telling time"
+  }
+}

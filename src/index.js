@@ -12,7 +12,7 @@ const Alexa = require("alexa-sdk");
 
 //import from moment.js
 //https://momentjs.com/
-var moment = require('moment');
+const moment = require('moment');
 
 const makePlainText = Alexa.utils.TextUtils.makePlainText;
 const makeImage = Alexa.utils.ImageUtils.makeImage;
@@ -34,10 +34,12 @@ exports.handler = function(event, context, callback) {
 
 const newSessionHandlers = {
     'LaunchRequest': function () {
+        this.attributes['displaySupported']=this.event.context.System.device.supportedInterfaces.hasOwnProperty("Display"); //boolean
         this.handler.state = GAME_STATES.START;
         this.emitWithState("StartGame", true);
     },
     'ChooseModeIntent':function(){
+        this.attributes['displaySupported']=this.event.context.System.device.supportedInterfaces.hasOwnProperty("Display"); //boolean
         this.handler.state = GAME_STATES.START;
         this.emitWithState("ChooseModeIntent");
     },
@@ -105,8 +107,10 @@ var startStateHandlers = Alexa.CreateStateHandler(GAME_STATES.START, {
         // .build();
 
         this.response.speak('Hi there, welcome to Telling Time. What mode would you like to go to? Learn mode, identify mode, or math mode.')
-                        .listen('Please select an option. Learn mode, identify mode, or math mode.')
-                        .renderTemplate(template);
+                        .listen('Please select an option. Learn mode, identify mode, or math mode.');
+        if(this.attributes['displaySupported']){
+            this.response.renderTemplate(template);
+        }
         this.emit(':responseReady');
     },
 
@@ -145,13 +149,12 @@ var startStateHandlers = Alexa.CreateStateHandler(GAME_STATES.START, {
     },
     "identifyIntro":function(){
         this.attributes["mode"]="identify";
-
-        var displaySupported=this.event.context.System.device.supportedInterfaces.hasOwnProperty("Display");
-        if(displaySupported){
-            var str='You are in the identify mode! Yes, you are using an Echo Show or Echo Spot. This mode requires an Echo Show or Echo Spot in order to display images. Do you want to continue?';
+        var str;
+        if(this.attributes['displaySupported']){
+            str='You are in the identify mode! Yes, you are using an Echo Show or Echo Spot. This mode requires an Echo Show or Echo Spot in order to display images. Do you want to continue?';
         }
         else{
-            var str="You are in the identify mode! No, you are not using an Echo Show or Echo Spot. This mode requires an Echo Show or Echo Spot in order to display images. Do you want to continue?";
+            str="You are in the identify mode! No, you are not using an Echo Show or Echo Spot. This mode requires an Echo Show or Echo Spot in order to display images. Do you want to continue?";
         }
         this.response.speak(str)
                  .listen("Are you ready to play identify mode? Say yes to continue, or say no to go back.");
@@ -169,7 +172,7 @@ var startStateHandlers = Alexa.CreateStateHandler(GAME_STATES.START, {
             this.emitWithState("startIdentify");
         }
 		else{
-			this.emit('Unhandled');
+			this.emitWithState('Unhandled');
 		}
     },
     "AMAZON.NoIntent":function(){
@@ -207,10 +210,10 @@ var startStateHandlers = Alexa.CreateStateHandler(GAME_STATES.START, {
             this.emitWithState("learn");
         }
         if(this.event.request.token=="option2"){
-            this.emit("identifyIntro");
+            this.emitWithState("identifyIntro");
         }
         if(this.event.request.token=="option3"){
-            this.emit("mathIntro");
+            this.emitWithState("mathIntro");
         }
     },
     "Unhandled": function () {
@@ -234,7 +237,7 @@ var learnContent=[
     '60 seconds equals 1 minute. 60 minutes equals 1 hour. 24 hours equals 1 day. When the minutes go over 60, you have to subtract 60 from the minute and add 1 to the hour. That\'s called rounding. Rounding applies to other units, too, like rounding 24 hours into the next day. <break time="1.5s"/>Did you get it? Say, next, to continue.',
     'To tell the hour, look at where is the hour hand. If it is between two number, use the number that is before. If it is precisely pointing the number, it\'s exactly that-o\'clock. <break time="1.5s"/>Did you get it? Say, next, to continue.',
     'To tell the minute, it is quite similar to telling the hour. First, look for the number which the <phoneme alphabet="ipa" ph="ˈmɪn ɪt">minute</phoneme> hand has passed. Multiply that by 5. Then, add the remaining minutes from the number to where the hand is pointing. For example, the image shows that the <phoneme alphabet="ipa" ph="ˈmɪn ɪt">minute</phoneme> hand is between 2 and 3. Multiply 2 times 5, then add 3, so it is 10 plus 3 equals 13 minutes. <break time="1.5s"/>Did you get it? Say, next, to continue.',
-    'Lastly, put the word, AM, if it is in the morning. Use, PM, for afternoon and evening. For example, you would say, 9:45 AM, or equivalently, 9:45 in the morning. That\'s it! Congrats! You just learned to tell time! <break time="1s"/>What would you like to do now? Start over, or go to the main menu?'
+    'Lastly, put the word, AM, if it is in the morning. Or use, PM, for afternoon and evening. For example, you would say, 9:45 AM, or equivalently, 9:45 in the morning. That\'s it! Congrats! You just learned to tell time! <break time="1s"/>What would you like to do now? Start over, or go to the main menu?'
 
 ];
 var learnCard=[
@@ -244,16 +247,16 @@ var learnCard=[
     "60 seconds = 1 minute.  60 minutes = 1 hour.  24 hours = 1 day.  When the minutes go over 60, you have to subtract 60 from the minute and add 1 to the hour. That's called rounding. Rounding applies to other units, too, like rounding 24 hours into the next day.",
     "To tell the hour, look at where is the hour hand. If it is between two number, use the number that is before. If it is precisely pointing the number, it's exactly that-o'clock.",
     'To tell the minute, it is quite similar to telling the hour. First, look for the number which the minute hand has passed. Multiply that by 5. Then, add the remaining minutes from the number to where the hand is pointing. For example: (listen and see the picture)',
-    "Use AM if it is in the morning, PM for afternoon and evening. Example: 9:45 AM"
+    "Use AM if it is in the morning, PM for afternoon and evening. Example: 9:45 AM \nCongrats! You just learned to tell time!"
 
 ];
 var learnImage=[
     null,
-    "https://www.wikihow.com/images/thumb/7/7b/Tell-Time-Step-2-Version-2.jpg/aid254068-v4-728px-Tell-Time-Step-2-Version-2.jpg.webp",
-    "https://www.wikihow.com/images/thumb/2/26/Tell-Time-Step-4-Version-2.jpg/aid254068-v4-728px-Tell-Time-Step-4-Version-2.jpg.webp",
+    "https://www.wikihow.com/images/thumb/7/7b/Tell-Time-Step-2-Version-2.jpg/aid254068-v4-728px-Tell-Time-Step-2-Version-2.jpg",
+    "https://www.wikihow.com/images/thumb/2/26/Tell-Time-Step-4-Version-2.jpg/aid254068-v4-728px-Tell-Time-Step-4-Version-2.jpg",
     null,
-    "https://www.wikihow.com/images/thumb/b/b8/Tell-Time-Step-6-Version-2.jpg/aid254068-v4-728px-Tell-Time-Step-6-Version-2.jpg.webp",
-    "https://www.wikihow.com/images/thumb/b/b7/Tell-Time-Step-11.jpg/aid254068-v4-728px-Tell-Time-Step-11.jpg.webp",
+    "https://www.wikihow.com/images/thumb/b/b8/Tell-Time-Step-6-Version-2.jpg/aid254068-v4-728px-Tell-Time-Step-6-Version-2.jpg",
+    "https://www.wikihow.com/images/thumb/b/b7/Tell-Time-Step-11.jpg/aid254068-v4-728px-Tell-Time-Step-11.jpg",
     null
 ];
 
@@ -262,7 +265,7 @@ var learnStateHandlers = Alexa.CreateStateHandler(GAME_STATES.LEARN, {
     "learn":function(){
         var learnSlide=this.attributes["learnSlide"];
         var imageObj={
-            smallImageUrl:learnImage[learnSlide]
+            largeImageUrl:learnImage[learnSlide]
         };
         this.response.speak(learnContent[learnSlide]).listen("Say, next, to continue.");       
         if(learnSlide==1 || learnSlide==2 || learnSlide==4 || learnSlide==5){
@@ -279,14 +282,15 @@ var learnStateHandlers = Alexa.CreateStateHandler(GAME_STATES.LEARN, {
             this.emitWithState("learn");
         }
         else{
-            this.emitWithState("Unhandled");
+            this.handler.state = GAME_STATES.START;
+            this.emitWithState("StartGame");
         }
     },
     "AMAZON.YesIntent":function(){
-        this.emit("AMAZON.NextIntent");
+        this.emitWithState("AMAZON.NextIntent");
     },
     "AMAZON.NoIntent":function(){
-        this.emit("AMAZON.RepeatIntent");
+        this.emitWithState("AMAZON.RepeatIntent");
     },
     "AMAZON.RepeatIntent":function(){
         this.emitWithState("learn");
@@ -321,7 +325,8 @@ var learnStateHandlers = Alexa.CreateStateHandler(GAME_STATES.LEARN, {
         this.emit(':responseReady');
 	},
     "Unhandled": function () {
-        this.response.speak('Sorry, I don\'t understand your answer. Try again.').listen("Try your prompt again.");
+        console.log("unhandled");
+        this.response.speak("Sorry, I don't understand your answer. Try again.").listen("Try your prompt again.");
         this.emit(':responseReady');
     }
 });
@@ -392,7 +397,7 @@ var mathStateHandlers = Alexa.CreateStateHandler(GAME_STATES.MATH, {
         var durminstr=this.attributes["durminstr"];
 
         if(this.attributes["forgotUnit"]){
-            speech +="Oops, you didn\'t put the time unit, like, hours and minutes. "
+            speech +="Oops, you didn\'t put the time unit, like, hours and minutes. ";
         }
         if(this.attributes["lastQ"]==-1 && !this.attributes["forgotUnit"])
         {
@@ -402,7 +407,7 @@ var mathStateHandlers = Alexa.CreateStateHandler(GAME_STATES.MATH, {
             speech +="Okay. ";
         }
         else{
-            speech +="Try again. "
+            speech +="Try again. ";
         }
         this.attributes["forgotUnit"]=false;
         
@@ -519,7 +524,7 @@ function populateMathQ(){
         "startTime":time1,
         "duration":durmin,
         "endTime":time2,
-        "durminstr":durminstr,
+        "durminstr":durminstr
     });
 }
 
@@ -595,7 +600,10 @@ var identifyStateHandlersType1 = Alexa.CreateStateHandler(GAME_STATES.IDENTIFY1,
             )
             .build();
        
-        this.response.speak(speech).listen("Please answer with the hour and the minute.").renderTemplate(template);
+        this.response.speak(speech).listen("Please answer with the hour and the minute.");
+        if(this.attributes['displaySupported']){
+            this.response.renderTemplate(template);
+        }
         this.emit(':responseReady');
     },
 
@@ -760,7 +768,10 @@ var identifyStateHandlersType2 = Alexa.CreateStateHandler(GAME_STATES.IDENTIFY2,
         )
         .build();
         
-        this.response.speak(speech).listen("Please answer the question with the option number, like, option 2.").renderTemplate(template);
+        this.response.speak(speech).listen("Please answer the question with the option number, like, option 2.");
+        if(this.attributes['displaySupported']){
+            this.response.renderTemplate(template);
+        }
         this.emit(':responseReady');
     },
 
